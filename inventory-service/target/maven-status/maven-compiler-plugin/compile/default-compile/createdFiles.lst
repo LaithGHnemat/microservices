@@ -1,0 +1,9 @@
+com\evolution\Inventoryservice\controller\InventoryController.class
+com\evolution\Inventoryservice\service\InventoryService.class
+com\evolution\Inventoryservice\model\Inventory$InventoryBuilder.class
+com\evolution\Inventoryservice\model\Inventory.class
+com\evolution\Inventoryservice\dto\InventoryResponse.class
+com\evolution\Inventoryservice\repository\InventoryRepository.class
+com\evolution\Inventoryservice\InventoryServiceApplication.class
+com\evolution\Inventoryservice\config\InventoryConfiguration.class
+com\evolution\Inventoryservice\dto\InventoryResponse$InventoryResponseBuilder.class
