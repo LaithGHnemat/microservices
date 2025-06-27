@@ -14,4 +14,9 @@ public interface InventoryRepository extends JpaRepository< Inventory, Long> {
     Optional<Inventory> findBySkuCode(String skuCode);
     @Query("SELECT i FROM Inventory i WHERE i.skuCode IN :skuCodes")
     List<Inventory> findBySkuCodeIn(@Param("skuCodes") List<String> skuCodes);
+
+
+    boolean existsBySkuCode(String skuCode);
+
+
 }

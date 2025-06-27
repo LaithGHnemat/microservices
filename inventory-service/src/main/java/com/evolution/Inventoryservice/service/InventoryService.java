@@ -1,6 +1,7 @@
 package com.evolution.Inventoryservice.service;
 
 import com.evolution.Inventoryservice.dto.InventoryResponse;
+import com.evolution.Inventoryservice.model.Inventory;
 import com.evolution.Inventoryservice.repository.InventoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,19 @@ public class InventoryService {
     @Autowired
     private InventoryRepository inventoryRepository;
 
-    public List<InventoryResponse> isInStock(List<String> skuCode) {
-        return inventoryRepository.findBySkuCodeIn(skuCode).stream()
-                .map(inventory ->   InventoryResponse
-                        .builder()
+   public List<InventoryResponse> isInStock(List<String> skuCode) {
+        List<Inventory> inventories = inventoryRepository.findBySkuCodeIn(skuCode);
+
+
+        return inventories.stream()
+                .map(inventory -> InventoryResponse.builder()
                         .skuCode(inventory.getSkuCode())
                         .isInStock(inventory.getQuantity() > 0)
                         .build())
-                .collect(Collectors.toList());}
+                .collect(Collectors.toList());
+    }
 
     public boolean isInStock(String skuCode) {
-        return inventoryRepository.findBySkuCode(skuCode).isPresent();
+        return inventoryRepository.existsBySkuCode(skuCode);
     }
 }

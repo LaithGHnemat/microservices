@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
@@ -36,6 +37,9 @@ public class OrderService implements IOrderService{
     public void placeOrder(OrderRequest orderRequest) {
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
+        if (CollectionUtils.isEmpty(orderRequest.getOrderLineItemsDto())) {
+            return;
+        }
 
         List<OrderLineItems> orderLineItems = orderRequest.getOrderLineItemsDto()
                         .stream()
@@ -73,6 +77,7 @@ public class OrderService implements IOrderService{
         return OrderLineItems.builder().
                 price (orderLineItemsDto.getPrice()).
                 quantity (orderLineItemsDto.getQuantity ()).
-                skuCode (orderLineItemsDto.getSkuCode()).build ();
+                skuCode (orderLineItemsDto.getSkuCode())
+                .build ();
     }
 }

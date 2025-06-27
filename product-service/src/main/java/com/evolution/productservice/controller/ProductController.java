@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,7 +32,19 @@ public class ProductController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List< ProductResponse > getAllProducts() {
-        return productService.getAllProducts();
+         return productService.getAllProducts();
+    }
+
+
+    @GetMapping("/api-gateway-test")
+    @ResponseStatus(HttpStatus.OK)
+    public List< ProductResponse > apiGatewayTest() {
+        // todo uncommit this return productService.getAllProducts();
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setDescription("test");
+        productResponse.setName("hi");
+        return Collections.singletonList(productResponse);
     }
 
 }
