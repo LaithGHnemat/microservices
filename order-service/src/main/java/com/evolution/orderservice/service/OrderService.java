@@ -14,6 +14,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -71,6 +72,22 @@ public class OrderService implements IOrderService{
         if (!Boolean.TRUE.equals(isAllInStock))
             throw new IllegalArgumentException("the product not in the inv try again dude ");
         orderRepository.save(order);
+    }
+
+    @Override
+    public String checkSingelItem(OrderLineItemsDto orderLineItemsDto) {
+
+        if (ObjectUtils.isEmpty(orderLineItemsDto)) {
+            return "";
+        }
+        Boolean inStock = webClient.get()
+                .uri("http://localhost:8082/api/inventory/api-gateway-test",
+                        uriBuilder -> uriBuilder.queryParam("skuCode", orderLineItemsDto.getSkuCode()).build())
+                .retrieve()
+                .bodyToMono(Boolean.class)
+                .block();
+
+       return inStock.toString();
     }
 
     private OrderLineItems mapFromDto(OrderLineItemsDto orderLineItemsDto) {

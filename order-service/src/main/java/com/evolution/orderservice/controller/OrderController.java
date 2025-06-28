@@ -9,10 +9,13 @@ package com.evolution.orderservice.controller;
 import com.evolution.orderservice.dto.OrderLineItemsDto;
 import com.evolution.orderservice.dto.OrderRequest;
 import com.evolution.orderservice.service.IOrderService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/order")
@@ -24,23 +27,28 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+
     public String placeOrder(@RequestBody OrderRequest orderRequest) {
         log.info("Placing Order");
-
         orderService.placeOrder(orderRequest);
         return "The order has been  placed Successfully :) ";
     }
 
     @PostMapping("/api-gateway-test")
     @ResponseStatus(HttpStatus.CREATED)
-    public String placeOrder(@RequestBody OrderLineItemsDto orderLineItemsDto) {
-        return orderLineItemsDto.toString();
+    @CircuitBreaker(name="inventory",fallbackMethod = "fallbackMethod")
+    public String checkSingelItem(@RequestBody OrderLineItemsDto orderLineItemsDto) {
+    // todo this just an ex
+        return orderService.checkSingelItem(orderLineItemsDto);
+
 
     }
 
-   /* public CompletableFuture< String > fallbackMethod(OrderRequest orderRequest, RuntimeException runtimeException) {
-        log.info ( "Cannot Place Order Executing Fallback logic" );
-        return CompletableFuture.supplyAsync ( () -> "Oops! Something went wrong, please order after some time!" );
-    }*/
+    // note: fallbackMethod will be exc when CircuitBreaker decides
+      //- >> we can not return the value of placeOrder
+    public String fallbackMethod(OrderLineItemsDto orderLineItemsDto, Throwable throwable) {
+        log.info("Cannot check item availability. Executing fallback logic.");
+        return "Inventory Service is currently unavailable. Please try again later.";
+    }
 
 }
